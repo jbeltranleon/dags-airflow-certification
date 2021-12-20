@@ -13,7 +13,9 @@ triggered after every schedule_interval
 
 # Cron vs Timedelta
 
-**Cron expression** is stateless, **Timedelta** is stateful or relative (according to the last execution date).
+**Cron expression** is stateless, **Timedelta** is stateful or relative (according to the last execution date)
+
+> Timedelta is useful for every three days executions
 
 DAG: `processor_customer`
 
