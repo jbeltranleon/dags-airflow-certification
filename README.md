@@ -12,3 +12,15 @@
 triggered after every schedule_interval
 
 # Cron vs Timedelta
+
+**Cron expression** is stateless, **Timedelta** is stateful or relative (according to the last execution date).
+
+DAG: `processor_customer`
+
+```python
+start_date=datetime(2021, 1, 1, 10, 0) # 01-01-2021 10:00
+# A) first execution: 02-01-2021 00:00
+schedule_interval = '0 0 * * *' #'@daily'
+# B) first execution: 02-01-2021 10:00
+schedule_interval = timedelta(days=1)
+```
