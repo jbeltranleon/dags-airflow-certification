@@ -5,27 +5,31 @@ from airflow.models import Variable
 from airflow.operators.python import PythonOperator
 
 # Do not get variables outside a function, this creates a lot of useless connections (affect db)
-# variable = Variable.get('my_dag_variable')
+# variable = Variable.get("my_dag_variable")
 
 
 def _extract():
-    # variable = Variable.get('my_dag_variable')
-
+    # variable = Variable.get("my_dag_variable")
     # Use dicts instead of generating individual variables
-    settings = Variable.get('my_dag_settings', deserialize_json=True)
-
-    email = settings.get('email')
-    hobbies = settings.get('hobbies')
-
-    secret = Variable.get('my_dag_secret')
-
+    settings = Variable.get("my_dag_settings", deserialize_json=True)
+    email = settings.get("email")
+    hobbies = settings.get("hobbies")
+    secret = Variable.get("my_dag_secret")
     print(email, secret, hobbies[0])
+
+
+def _extract_using_template(email):
+    print(f"Sending email to: {email}")
 
 
 with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown*", start_date=datetime(2021, 11, 4),
          schedule_interval="@daily", dagrun_timeout=timedelta(minutes=10), tags=["data_science"], catchup=False) as dag:
 
     # Do not get variables outside a function, this creates a lot of useless connections (affect db)
-    # variable = Variable.get('my_dag_variable')
+    # variable = Variable.get("my_dag_variable")
 
     extract = PythonOperator(task_id="extract", python_callable=_extract)
+    extract_using_template = PythonOperator(task_id="extract_using_template", python_callable=_extract_using_template,
+                                            op_args=["{{var.json.my_dag_settings.email}}"])
+
+    extract >> extract_using_template
