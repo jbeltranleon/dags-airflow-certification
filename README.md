@@ -40,3 +40,7 @@ Use start_date and catchup to backfill previous executions. Or use this command 
 `airflow dags backfill -s 2020-01-01 -e 2021-01-01`
 
 and add the parameter `max_active_runs` to the dag definition for a better backfilling handle.
+
+## Test
+
+To test specific task using a cli command: `airflow tasks test my_dag extract 2021-01-01`
