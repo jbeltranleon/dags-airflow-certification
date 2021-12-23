@@ -51,3 +51,5 @@ Add the Env variable into the Dockerfile with the prefix: `AIRFLOW_VAR_` and res
 
 `ENV AIRFLOW_VAR_MY_DAG_S3_BUCKET='s3://nyc-tlc/'`
 
+To see the variable on the container you could use: `env | grep AIRFLOW_VAR`
+

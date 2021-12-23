@@ -18,12 +18,12 @@ def _extract():
     print(email, secret, hobbies[0])
 
 
-def _extract_using_template(email):
-    print(f"Sending email to: {email}")
+def _extract_using_template(value):
+    print(f"Value: {value}")
 
 
 with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown*", start_date=datetime(2021, 11, 4),
-         schedule_interval="@daily", dagrun_timeout=timedelta(minutes=10), tags=["data_science"], catchup=False) as dag:
+         schedule_interval=None, dagrun_timeout=timedelta(minutes=10), tags=["data_science"], catchup=False) as dag:
 
     # Do not get variables outside a function, this creates a lot of useless connections (affect db)
     # variable = Variable.get("my_dag_variable")
@@ -32,4 +32,8 @@ with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown
     extract_using_template = PythonOperator(task_id="extract_using_template", python_callable=_extract_using_template,
                                             op_args=["{{var.json.my_dag_settings.email}}"])
 
-    extract >> extract_using_template
+    extract_using_template_and_env_var = PythonOperator(task_id="extract_using_template_and_env_var",
+                                                        python_callable=_extract_using_template,
+                                                        op_args=["{{var.json.my_dag_s3_bucket}}"])
+
+    extract >> extract_using_template >> extract_using_template_and_env_var
