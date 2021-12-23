@@ -44,3 +44,10 @@ and add the parameter `max_active_runs` to the dag definition for a better backf
 ## Test
 
 To test specific task using a cli command: `airflow tasks test my_dag extract 2021-01-01`
+
+# Environment Variables
+
+Add the Env variable into the Dockerfile with the prefix: `AIRFLOW_VAR_` and restart airflow `astro dev stop && astro dev start`:
+
+`ENV AIRFLOW_VAR_MY_DAG_S3_BUCKET='s3://nyc-tlc/'`
+
