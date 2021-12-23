@@ -34,6 +34,6 @@ with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown
 
     extract_using_template_and_env_var = PythonOperator(task_id="extract_using_template_and_env_var",
                                                         python_callable=_extract_using_template,
-                                                        op_args=["{{var.json.my_dag_s3_bucket}}"])
+                                                        op_args=["{{var.json.my_dag_important_number}}"])
 
     extract >> extract_using_template >> extract_using_template_and_env_var
