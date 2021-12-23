@@ -53,3 +53,5 @@ Add the Env variable into the Dockerfile with the prefix: `AIRFLOW_VAR_` and res
 
 To see the variable on the container you could use: `env | grep AIRFLOW_VAR`
 
+https://airflow.apache.org/docs/apache-airflow/stable/security/secrets/secrets-backend/index.html
+
