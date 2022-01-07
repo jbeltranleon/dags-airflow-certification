@@ -24,13 +24,17 @@ def _extract_using_template(*values):
         print(f"Value: {value}")
 
 
-def _set_xcom(ti):
+def _set_xcom():
     message = "Hi Python"
-    ti.xcom_push(key="message", value=message)
+    # ti.xcom_push(key="message", value=message)
+    # Alternative method to push values to xcom
+    return message
 
 
 def _get_xcom(ti):
-    message = ti.xcom_pull(key="message", task_ids="set_xcom")
+    # message = ti.xcom_pull(key="message", task_ids="set_xcom")
+    # Alternative method to pull values to xcom (key="return_value" optional)
+    message = ti.xcom_pull(task_ids="set_xcom")
     print(message)
 
 
