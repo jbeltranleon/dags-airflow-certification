@@ -1,6 +1,8 @@
 # If the file contains the words airflow or dag, the scheduler will try to load the file
 from airflow import DAG
 from datetime import datetime, timedelta
+
+from airflow.decorators import task
 from airflow.models import Variable
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
@@ -9,7 +11,8 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 # variable = Variable.get("my_dag_variable")
 
 
-def _extract():
+@task.python
+def extract():
     # variable = Variable.get("my_dag_variable")
     # Use dicts instead of generating individual variables
     settings = Variable.get("my_dag_settings", deserialize_json=True)
@@ -44,7 +47,6 @@ with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown
     # Do not get variables outside a function, this creates a lot of useless connections (affect db)
     # variable = Variable.get("my_dag_variable")
 
-    extract = PythonOperator(task_id="extract", python_callable=_extract)
     extract_using_template = PythonOperator(task_id="extract_using_template", python_callable=_extract_using_template,
                                             op_args=["{{var.json.my_dag_settings.email}}"])
 
@@ -59,5 +61,5 @@ with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown
     get_data_using_ds = PythonOperator(task_id='get_ds', python_callable=_extract_using_template,
                                        op_args=["{{ts}}", "{{ds}}", "{{run_id}}"])
 
-    extract >> extract_using_template >> extract_using_template_and_env_var >> get_data_using_ds
+    extract() >> extract_using_template >> extract_using_template_and_env_var >> get_data_using_ds
     get_data_using_ds >> set_xcom >> get_xcom
