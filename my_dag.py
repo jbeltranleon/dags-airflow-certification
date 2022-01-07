@@ -19,8 +19,19 @@ def _extract():
     print(email, secret, hobbies[0])
 
 
-def _extract_using_template(value):
-    print(f"Value: {value}")
+def _extract_using_template(*values):
+    for value in values:
+        print(f"Value: {value}")
+
+
+def _set_xcom(ti):
+    message = "Hi Python"
+    ti.xcom_push(key="message", value=message)
+
+
+def _get_xcom(ti):
+    message = ti.xcom_pull(key="message", task_ids="set_xcom")
+    print(message)
 
 
 with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown*", start_date=datetime(2021, 11, 4),
@@ -37,6 +48,12 @@ with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown
                                                         python_callable=_extract_using_template,
                                                         op_args=["{{var.json.my_dag_important_number}}"])
 
-    get_data_using_ds = PostgresOperator(task_id='get_data_using_ds', sql='sql/basic.sql')
+    set_xcom = PythonOperator(task_id="set_xcom", python_callable=_set_xcom)
+    get_xcom = PythonOperator(task_id="get_xcom", python_callable=_get_xcom)
 
-    extract >> extract_using_template >> extract_using_template_and_env_var
+    # get_data_using_ds = PostgresOperator(task_id='get_ds', sql='sql/basic.sql')
+    get_data_using_ds = PythonOperator(task_id='get_ds', python_callable=_extract_using_template,
+                                       op_args=["{{ts}}", "{{ds}}", "{{run_id}}"])
+
+    extract >> extract_using_template >> extract_using_template_and_env_var >> get_data_using_ds
+    get_data_using_ds >> set_xcom >> get_xcom
