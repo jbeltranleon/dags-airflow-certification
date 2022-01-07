@@ -2,7 +2,7 @@
 from airflow import DAG
 from datetime import datetime, timedelta
 
-from airflow.decorators import task
+from airflow.decorators import task, dag
 from airflow.models import Variable
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
@@ -41,6 +41,11 @@ def _get_xcom(ti):
     print(message)
 
 
+"""
+@dag(description="DAG in charge of ... *This allow Markdown*", start_date=datetime(2021, 11, 4),
+     schedule_interval=None, dagrun_timeout=timedelta(minutes=10), tags=["data_science"], catchup=False)
+def my_dag():
+"""
 with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown*", start_date=datetime(2021, 11, 4),
          schedule_interval=None, dagrun_timeout=timedelta(minutes=10), tags=["data_science"], catchup=False) as dag:
 
@@ -63,3 +68,8 @@ with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown
 
     extract() >> extract_using_template >> extract_using_template_and_env_var >> get_data_using_ds
     get_data_using_ds >> set_xcom >> get_xcom
+
+"""
+# Required using the @dag decorator
+my_dag()
+"""
