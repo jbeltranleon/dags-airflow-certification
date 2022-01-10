@@ -28,7 +28,8 @@ with DAG(dag_id="main", description="Main Dag - SubDag example", dagrun_timeout=
 
     transform = SubDagOperator(
         task_id="process",
-        subdag=subdag_factory(parent_dag_id="main", subdag_dag_id="process", default_args=default_args)
+        subdag=subdag_factory(parent_dag_id="main", subdag_dag_id="process", default_args=default_args),
+        poke_interval=3
     )
 
     get_response() >> transform >> read_file()
