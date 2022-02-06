@@ -42,7 +42,7 @@ def read_file():
             print(line)
 
 
-with DAG(dag_id="task_group", description="Main Dag - SubDag example", dagrun_timeout=timedelta(minutes=10),
+with DAG(dag_id="task_group", description="Main Dag - Tasks Group example", dagrun_timeout=timedelta(minutes=10),
          default_args=default_args) as dag:
 
     with TaskGroup(group_id="process") as transform:
