@@ -21,3 +21,12 @@ max_active_runs = 16 # the Airflow scheduler will run no more than max_active_ru
 task_concurrency = 1 # This variable controls the number of concurrent running task instances across dag_runs per task
 pool = 'default_pool' # This variable controls the number of concurrent running task instances assigned to the pool.
 ```
+
+> You could create pools using the UI and then defining the poll's slots for example to 1 and then asign the pool name on the DAG's pool argument. This is helpful if you want to limit parallel task that consumes more resources.
+> Use `pool_slots` to define how many slots the task could take
+
+
+# Priority
+
+Use `priority_weigth` to define the task's priority when the task is executed in parallel with others.
+> The larger the number the higher the priority. The priority is evaluated at the pool level
