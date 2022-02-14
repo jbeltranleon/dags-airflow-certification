@@ -30,3 +30,14 @@ pool = 'default_pool' # This variable controls the number of concurrent running 
 
 Use `priority_weigth` to define the task's priority when the task is executed in parallel with others.
 > The larger the number the higher the priority. The priority is evaluated at the pool level
+
+## Weight Rule
+
+parameter: `weigth_rule`
+
+* `downstream`: ↓ Default behavior
+* `upstream`: ↑ Dags dependencies
+* `absolute`: Based on the defined priority
+
+
+> wait_for_downstream (bool) – when set to true, an instance of task X will wait for tasks immediately downstream of the previous instance of task X to finish successfully before it runs. This is useful if the different instances of a task X alter the same asset, and this asset is used by tasks downstream of task X. Note that depends_on_past is forced to True wherever wait_for_downstream is used. Also note that only tasks immediately downstream of the previous task instance are waited for; the statuses of any tasks further downstream are ignored.
