@@ -1,3 +1,3 @@
 # DAG versioning
 
-> We could lost the information of removed tasks
+> We could lose the information of removed tasks
