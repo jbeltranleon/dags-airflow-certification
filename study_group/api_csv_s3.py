@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 # https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/operators/s3.html
-from airflow.providers.amazon.aws.operators.s3 import S3Hook
+from airflow.hooks.S3_hook import S3Hook
 
 
 def _save_api_response():
@@ -15,12 +15,9 @@ def _save_api_response():
             f.write(response.text)
 
 
-def _upload_file_to_sftp():
-    with open('./file.csv', mode='r') as f:
-        print(f.readlines())
-
-    with open('./file_2.csv', mode='r') as f:
-        print(f.readlines())
+def _upload_file_to_s3(filename: str, key: str, bucket_name: str):
+    hook = S3Hook('s3_conn')
+    hook.load_file(filename=filename, key=key, bucket_name=bucket_name)
 
 
 with DAG(
@@ -32,16 +29,19 @@ with DAG(
         tags=["study_group", "challenge"],
         catchup=False
 ) as dag:
-
     save_api_response = PythonOperator(
         task_id="save_api_response",
         python_callable=_save_api_response
     )
 
     upload_file_to_s3 = PythonOperator(
-        task_id="upload_file_to_sftp",
-        python_callable=
+        task_id="upload_file_to_s3",
+        python_callable=_upload_file_to_s3,
+        op_kwargs={
+            'filename': './file.csv',
+            'key': 'file_from_airflow.csv',
+            'bucket_name': 'factored-airflow-study-group'
+        }
     )
-
 
     save_api_response >> upload_file_to_s3
