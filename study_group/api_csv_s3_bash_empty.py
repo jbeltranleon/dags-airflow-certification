@@ -25,7 +25,7 @@ with DAG(
 ) as dag:
     save_api_response_bash = BashOperator(
         task_id="save_api_response_bash",
-        bash_command="curl https://www.boredapi.com/api/activity/ >> ./file_2.csv"
+        bash_command="// Add code here"
     )
 
     upload_file_to_s3 = PythonOperator(

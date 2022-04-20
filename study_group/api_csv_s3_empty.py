@@ -6,7 +6,11 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 # https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/operators/s3.html
 from airflow.hooks.S3_hook import S3Hook
-from airflow.operators.bash import BashOperator
+
+
+def _save_api_response():
+    response = requests.get('https://www.boredapi.com/api/activity/')
+    # Add code here
 
 
 def _upload_file_to_s3(filename: str, key: str, bucket_name: str):
@@ -15,7 +19,7 @@ def _upload_file_to_s3(filename: str, key: str, bucket_name: str):
 
 
 with DAG(
-        dag_id="second_challenge_bash",
+        dag_id="second_challenge",
         description="Second Challenge Upload S3",
         start_date=datetime(2022, 3, 24),
         schedule_interval=None,
@@ -23,9 +27,9 @@ with DAG(
         tags=["study_group", "challenge"],
         catchup=False
 ) as dag:
-    save_api_response_bash = BashOperator(
-        task_id="save_api_response_bash",
-        bash_command="curl https://www.boredapi.com/api/activity/ >> ./file_2.csv"
+    save_api_response = PythonOperator(
+        task_id="save_api_response",
+        python_callable=_save_api_response
     )
 
     upload_file_to_s3 = PythonOperator(
@@ -33,9 +37,9 @@ with DAG(
         python_callable=_upload_file_to_s3,
         op_kwargs={
             'filename': './file.csv',
-            'key': 'file_from_airflow_bash.csv',
+            'key': 'file_from_airflow.csv',
             'bucket_name': 'factored-airflow-study-group'
         }
     )
 
-    save_api_response_bash >> upload_file_to_s3
+    save_api_response >> upload_file_to_s3
