@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from airflow.decorators import task, dag
 from airflow.models import Variable
 from airflow.operators.python import PythonOperator
-from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 # Do not get variables outside a function, this creates a lot of useless connections (affect db)
 # variable = Variable.get("my_dag_variable")
@@ -62,7 +61,6 @@ with DAG(dag_id="my_dag", description="DAG in charge of ... *This allow Markdown
     set_xcom = PythonOperator(task_id="set_xcom", python_callable=_set_xcom)
     get_xcom = PythonOperator(task_id="get_xcom", python_callable=_get_xcom)
 
-    # get_data_using_ds = PostgresOperator(task_id='get_ds', sql='sql/basic.sql')
     get_data_using_ds = PythonOperator(task_id='get_ds', python_callable=_extract_using_template,
                                        op_args=["{{ts}}", "{{ds}}", "{{run_id}}"])
 
